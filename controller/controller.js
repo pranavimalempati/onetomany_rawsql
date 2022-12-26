@@ -82,12 +82,24 @@ const update = async(req,res)=>{
 const remove = async (req, res) => {
     try {
         const cust_id = req.body.cust_id
+        const cust_name = req.body.cust_name
         console.log("start excecution.......")
-        const resp = await client.query(`DELETE FROM orders o USING customers c
+        let resp;
+        if(cust_id){
+         resp = await client.query(`DELETE FROM orders o USING customers c
         WHERE o.cust_id = c.cust_id and c.cust_id = ${cust_id};
 
         DELETE FROM customers c WHERE c.cust_id = ${cust_id};`);
-        res.send(resp)
+
+    }else if (cust_name){
+    resp = await database.query(`DELETE FROM orders o USING customers c
+    WHERE o.cust_id = c.cust_id  and c.cust_name = '${cust_name}';
+
+      DELETE FROM customers  c WHERE c.cust_name ='${cust_name}';`);
+    }else{
+        resp = "please provide valid details"
+    }
+    res.send(resp)
     } catch (error) {
         res.send(error.message)
     }
